@@ -12,6 +12,9 @@ permissions:
     contents: read
     id-token: write
 
+env:
+    NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
 jobs:
     publish:
         runs-on: ubuntu-latest
@@ -59,10 +62,8 @@ jobs:
             - run: pnpm nx build ${{ steps.pkg.outputs.lib }}
 
             - name: Configure npm auth token
-              if: ${{ secrets.NPM_TOKEN != '' }}
-              run: pnpm config set --location=user "//registry.npmjs.org/:_authToken" "${NODE_AUTH_TOKEN}"
-              env:
-                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+              if: ${{ env.NODE_AUTH_TOKEN != '' }}
+              run: pnpm config set --location=project "//registry.npmjs.org/:_authToken" "${NODE_AUTH_TOKEN}"
 
             - run: pnpm publish --access public --no-git-checks
               working-directory: ${{ steps.pkg.outputs.dist }}
