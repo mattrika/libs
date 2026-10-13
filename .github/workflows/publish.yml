@@ -62,5 +62,8 @@ jobs:
               if: ${{ env.NODE_AUTH_TOKEN != '' }}
               run: pnpm config set --location=project "//registry.npmjs.org/:_authToken" "${NODE_AUTH_TOKEN}"
 
+            - name: Verify npm auth
+              run: pnpm whoami
+
             - run: pnpm publish --access public --no-git-checks
               working-directory: ${{ steps.pkg.outputs.dist }}
