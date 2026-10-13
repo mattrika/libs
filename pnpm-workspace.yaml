@@ -24,5 +24,3 @@ minimumReleaseAgeExclude:
     - '@angular/forms@22.0.7'
     - '@angular/platform-browser@22.0.7'
     - '@angular/router@22.0.7'
-onlyBuiltDependencies:
-    - '@touhidrahman/simple-store'
