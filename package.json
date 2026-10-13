@@ -59,6 +59,7 @@
         "oxfmt": "^0.59.0",
         "oxlint": "^1.87.0",
         "postcss": "^8.5.29",
+        "rollup": "^4.64.5",
         "tailwindcss": "^4.3.3",
         "typescript": "~6.0.3",
         "vitest": "^4.1.10"
