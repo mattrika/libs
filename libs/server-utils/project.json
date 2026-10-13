@@ -1,0 +1,28 @@
+{
+    "name": "server-utils",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
+    "sourceRoot": "libs/server-utils/src",
+    "projectType": "library",
+    "tags": [],
+    "targets": {
+        "build": {
+            "executor": "@nx/rollup:rollup",
+            "outputs": ["{options.outputPath}"],
+            "options": {
+                "outputPath": "dist/libs/server-utils",
+                "tsConfig": "libs/server-utils/tsconfig.lib.json",
+                "main": "libs/server-utils/src/index.ts",
+                "format": ["cjs", "esm"],
+                "generatePackageJson": true,
+                "generateExportsField": true,
+                "assets": [
+                    {
+                        "glob": "README.md",
+                        "input": "libs/server-utils",
+                        "output": "."
+                    }
+                ]
+            }
+        }
+    }
+}
