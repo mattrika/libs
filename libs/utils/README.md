@@ -15,7 +15,7 @@ yarn add @mattrika/utils
 ## Usage
 
 ```typescript
-import { /* utilities */ } from '@mattrika/utils';
+import {} from /* utilities */ '@mattrika/utils'
 ```
 
 ## License

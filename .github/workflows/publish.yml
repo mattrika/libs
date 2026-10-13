@@ -3,8 +3,7 @@ name: Publish npm packages
 on:
     push:
         tags:
-            - 'ngx-simple-store-v*'
-            - 'ngx-common-v*'
+            - 'utils-v*'
             - 'restauth-sdk-v*'
             - 'auditlog-sdk-v*'
 
@@ -28,17 +27,15 @@ jobs:
                   cache: true
                   install: true
                   require-lockfile: true
+                  scope: '@mattrika'
 
             - name: Select package
               id: pkg
               shell: bash
               run: |
-                  if [[ "${GITHUB_REF_NAME}" == ngx-simple-store-v* ]]; then
-                    echo "lib=ngx-simple-store" >> "$GITHUB_OUTPUT"
-                    echo "dist=dist/libs/ngx-simple-store" >> "$GITHUB_OUTPUT"
-                  elif [[ "${GITHUB_REF_NAME}" == ngx-common-v* ]]; then
-                    echo "lib=ngx-common" >> "$GITHUB_OUTPUT"
-                    echo "dist=dist/libs/ngx-common" >> "$GITHUB_OUTPUT"
+                  if [[ "${GITHUB_REF_NAME}" == utils-v* ]]; then
+                    echo "lib=utils" >> "$GITHUB_OUTPUT"
+                    echo "dist=dist/libs/utils" >> "$GITHUB_OUTPUT"
                   elif [[ "${GITHUB_REF_NAME}" == restauth-sdk-v* ]]; then
                     echo "lib=restauth-sdk" >> "$GITHUB_OUTPUT"
                     echo "dist=dist/libs/restauth-sdk" >> "$GITHUB_OUTPUT"
