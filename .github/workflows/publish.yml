@@ -27,7 +27,6 @@ jobs:
                   cache: true
                   install: true
                   require-lockfile: true
-                  scope: '@mattrika'
 
             - name: Select package
               id: pkg
