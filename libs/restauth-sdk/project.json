@@ -4,25 +4,6 @@
     "sourceRoot": "libs/restauth-sdk/src",
     "projectType": "library",
     "tags": [],
-    "targets": {
-        "build": {
-            "executor": "@nx/rollup:rollup",
-            "outputs": ["{options.outputPath}"],
-            "options": {
-                "outputPath": "dist/libs/restauth-sdk",
-                "tsConfig": "libs/restauth-sdk/tsconfig.lib.json",
-                "main": "libs/restauth-sdk/src/index.ts",
-                "format": ["cjs", "esm"],
-                "generatePackageJson": true,
-                "generateExportsField": true,
-                "assets": [
-                    {
-                        "glob": "README.md",
-                        "input": "libs/restauth-sdk",
-                        "output": "."
-                    }
-                ]
-            }
-        }
-    }
+    "// targets": "to see all targets run: nx show project restauth-sdk --web",
+    "targets": {}
 }

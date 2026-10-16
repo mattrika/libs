@@ -1,3 +1,4 @@
+import { isAfter } from 'date-fns'
 import { sign, verify } from 'hono/jwt'
 import type { SignatureAlgorithm } from 'hono/utils/jwt/jwa'
 import type { JWTPayload } from 'hono/utils/jwt/types'
@@ -42,5 +43,9 @@ export class TokenUtil {
             exp: exp as number,
             ...rest,
         } as T
+    }
+
+    expiresWithin(exp: number, seconds: number): boolean {
+        return isAfter(new Date(), new Date(exp - seconds * 1000))
     }
 }

@@ -4,25 +4,6 @@
     "sourceRoot": "libs/utils/src",
     "projectType": "library",
     "tags": [],
-    "targets": {
-        "build": {
-            "executor": "@nx/rollup:rollup",
-            "outputs": ["{options.outputPath}"],
-            "options": {
-                "outputPath": "dist/libs/utils",
-                "tsConfig": "libs/utils/tsconfig.lib.json",
-                "main": "libs/utils/src/index.ts",
-                "format": ["cjs", "esm"],
-                "generatePackageJson": true,
-                "generateExportsField": true,
-                "assets": [
-                    {
-                        "glob": "README.md",
-                        "input": "libs/utils",
-                        "output": "."
-                    }
-                ]
-            }
-        }
-    }
+    "// targets": "to see all targets run: nx show project utils --web",
+    "targets": {}
 }
