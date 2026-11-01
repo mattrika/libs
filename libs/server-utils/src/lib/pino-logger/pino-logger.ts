@@ -42,6 +42,9 @@ export function pinoLogger() {
         {
             level: process.env?.['PINO_LOG_LEVEL'] || 'info',
             timestamp: pino.stdTimeFunctions.isoTime,
+            serializers: {
+                err: pino.stdSerializers.errWithCause,
+            },
             formatters: {
                 bindings: (bindings) => ({
                     pid: bindings?.['pid'],

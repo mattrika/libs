@@ -20,6 +20,16 @@ export function onErrorFn(debugLog = true): ErrorHandler {
                   ? toErrorCode(err.cause)
                   : INTERNAL_SERVER_ERROR
 
+        let originalError = err
+        const seen = new Set<Error>([err])
+        while (
+            originalError.cause instanceof Error &&
+            !seen.has(originalError.cause)
+        ) {
+            originalError = originalError.cause
+            seen.add(originalError)
+        }
+
         const logger = c.get('logger')
 
         logger.error(
@@ -31,14 +41,14 @@ export function onErrorFn(debugLog = true): ErrorHandler {
             'Request failed',
         )
         if (debugLog) {
-            console.error(JSON.stringify(err, undefined, 2))
+            console.error(err)
         }
 
         return c.json(
             {
                 data: null,
                 error: !debugLog ? undefined : err,
-                message: err.cause ?? err.message,
+                message: originalError.message || err.message,
                 success: false,
             },
             statusCode,

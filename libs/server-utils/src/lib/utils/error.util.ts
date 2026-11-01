@@ -14,6 +14,7 @@ export function throwHttpError(
             : INTERNAL_SERVER_ERROR
     throw new HTTPException(code, {
         message: (error as Error).message ?? defaultMessage,
+        cause: error,
     })
 }
 
