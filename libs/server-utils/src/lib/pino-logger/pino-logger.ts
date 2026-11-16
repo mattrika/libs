@@ -4,14 +4,20 @@ import { ensureDirExists } from './logger.helpers'
 
 const logFilePath = './logs/app.log'
 
-let transport: ReturnType<typeof pino.transport> | undefined
+let rootLoggerInstance: pino.Logger | undefined
 
-export function pinoLogger() {
+export function pinoLogger(): pino.Logger {
+    if (rootLoggerInstance) {
+        return rootLoggerInstance
+    }
+
     const isProd = isProductionAppEnvironment()
+    let transport: ReturnType<typeof pino.transport> | undefined
 
     try {
-        // ensure logs folder exists
-        ensureDirExists(logFilePath)
+        if (isProd) {
+            ensureDirExists(logFilePath)
+        }
 
         transport = isProd
             ? pino.transport({
@@ -38,7 +44,7 @@ export function pinoLogger() {
         transport = undefined
     }
 
-    return pino(
+    rootLoggerInstance = pino(
         {
             level: process.env?.['PINO_LOG_LEVEL'] || 'info',
             timestamp: pino.stdTimeFunctions.isoTime,
@@ -82,4 +88,6 @@ export function pinoLogger() {
         },
         transport,
     )
+
+    return rootLoggerInstance
 }
