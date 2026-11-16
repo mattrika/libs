@@ -4,11 +4,12 @@ import { safeRequestBody, safeResponseBody } from './logger.helpers'
 import { pinoLogger } from './pino-logger'
 
 export const pinoLoggerMiddleware = (): MiddlewareHandler => {
+    const rootLogger = pinoLogger()
+
     return async (c, next) => {
         const start = Date.now()
-        const logger = pinoLogger()
 
-        const childLogger = logger.child({
+        const childLogger = rootLogger.child({
             requestId: c.var['requestId'],
             req: {
                 method: c.req.method,
