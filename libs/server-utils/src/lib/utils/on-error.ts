@@ -1,24 +1,9 @@
 import { ErrorHandler } from 'hono'
-import { ContentfulStatusCode } from 'hono/utils/http-status'
-import { INTERNAL_SERVER_ERROR } from 'stoker/http-status-codes'
-
-function toErrorCode(value: unknown): ContentfulStatusCode {
-    if (value === undefined || value === null || Number.isNaN(value)) {
-        return 500
-    }
-    return typeof value === 'number'
-        ? (Math.max(value, 0) as ContentfulStatusCode)
-        : 500
-}
+import { toErrorCode } from './error.util'
 
 export function onErrorFn(debugLog = true): ErrorHandler {
     return async (err, c) => {
-        const statusCode =
-            'status' in err
-                ? toErrorCode(err.status)
-                : 'cause' in err
-                  ? toErrorCode(err.cause)
-                  : INTERNAL_SERVER_ERROR
+        const statusCode = toErrorCode(err)
 
         let originalError = err
         const seen = new Set<Error>([err])

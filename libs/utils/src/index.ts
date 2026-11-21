@@ -1,5 +1,6 @@
 export * from './lib/array.util'
 export * from './lib/boolean.util'
+export * from './lib/error.util'
 export * from './lib/file.util'
 export * from './lib/grid.util'
 export * from './lib/id.util'

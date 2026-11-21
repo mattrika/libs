@@ -1,6 +1,11 @@
 import type { MiddlewareHandler } from 'hono'
 import { HTTPException } from 'hono/http-exception'
-import { safeRequestBody, safeResponseBody } from './logger.helpers'
+import { isProductionAppEnvironment } from '../predicates/is-prod'
+import {
+    maskSensitive,
+    safeRequestBody,
+    safeResponseBody,
+} from './logger.helpers'
 import { pinoLogger } from './pino-logger'
 
 export const pinoLoggerMiddleware = (): MiddlewareHandler => {
@@ -25,20 +30,32 @@ export const pinoLoggerMiddleware = (): MiddlewareHandler => {
 
         c.set('logger', childLogger)
 
-        childLogger.info('Incoming request')
+        childLogger.debug(
+            {
+                query: maskSensitive(c.req.query()),
+                headers: maskSensitive(c.req.header()),
+                body:
+                    c.req.method !== 'GET'
+                        ? await safeRequestBody(c.req)
+                        : undefined,
+            },
+            'Incoming request',
+        )
 
         try {
             await next()
 
-            const responseBody = await safeResponseBody(c.res)
+            const duration = Date.now() - start
+            const responseBody =
+                !isProductionAppEnvironment() && c.res.status < 400
+                    ? await safeResponseBody(c.res)
+                    : undefined
 
             childLogger.info(
                 {
-                    res: {
-                        status: c.res.status,
-                        durationMs: Date.now() - start,
-                        body: responseBody,
-                    },
+                    status: c.res.status,
+                    durationMs: duration,
+                    body: responseBody,
                 },
                 'Request completed',
             )
@@ -46,7 +63,7 @@ export const pinoLoggerMiddleware = (): MiddlewareHandler => {
             if (err instanceof HTTPException) {
                 childLogger.warn(
                     {
-                        res: { status: err.status },
+                        status: err.status,
                         error: err.message,
                     },
                     'HTTP error',

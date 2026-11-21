@@ -4,6 +4,51 @@ import type { HonoRequest } from 'hono'
 
 const MAX_SIZE = 1024 * 1024 // 1MB
 
+const SENSITIVE_KEYS = new Set([
+    'password',
+    'confirmpassword',
+    'oldpassword',
+    'newpassword',
+    'token',
+    'refreshtoken',
+    'accesstoken',
+    'secret',
+    'secretkey',
+    'apikey',
+    'xapikey',
+    'authorization',
+    'cookie',
+    'setcookie',
+    'pin',
+    'otp',
+    'code',
+    'invitetoken',
+    'ticket',
+    'clientsecret',
+    'privatekey',
+    'codeverifier',
+])
+
+const normalizeKey = (key: string) => key.toLowerCase().replace(/[-_\s]/g, '')
+
+export function maskSensitive<T>(value: T, depth = 0): T {
+    if (value === null || typeof value !== 'object' || depth > 8) {
+        return value
+    }
+    if (Array.isArray(value)) {
+        return value.map((item) => maskSensitive(item, depth + 1)) as T
+    }
+    const masked: Record<string, unknown> = {}
+    for (const [key, entry] of Object.entries(
+        value as Record<string, unknown>,
+    )) {
+        masked[key] = SENSITIVE_KEYS.has(normalizeKey(key))
+            ? '[REDACTED]'
+            : maskSensitive(entry, depth + 1)
+    }
+    return masked as T
+}
+
 export async function safeResponseBody(res: Response) {
     try {
         const contentType = res.headers.get('content-type') || ''
@@ -26,7 +71,7 @@ export async function safeResponseBody(res: Response) {
         if (size > MAX_SIZE)
             return `[RESPONSE TOO LARGE: ${Math.round(size / 1024)} KB]`
 
-        return JSON.parse(text)
+        return maskSensitive(JSON.parse(text))
     } catch {
         return '[UNREADABLE RESPONSE]'
     }
@@ -41,6 +86,11 @@ export async function safeRequestBody(req: HonoRequest) {
             return '[FILE UPLOAD SKIPPED]'
         }
 
+        // ❌ Skip webhook payloads to prevent stream locking or raw signature tampering
+        if (req.path.includes('webhook')) {
+            return '[WEBHOOK PAYLOAD SKIPPED]'
+        }
+
         if (!contentType.includes('application/json')) {
             return undefined
         }
@@ -52,7 +102,7 @@ export async function safeRequestBody(req: HonoRequest) {
         if (size > MAX_SIZE)
             return `[BODY TOO LARGE: ${Math.round(size / 1024)} KB]`
 
-        return JSON.parse(text)
+        return maskSensitive(JSON.parse(text))
     } catch {
         return '[UNREADABLE REQUEST BODY]'
     }
