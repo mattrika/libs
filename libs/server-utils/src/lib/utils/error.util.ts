@@ -7,7 +7,7 @@ export function toErrorCode(
     err: unknown,
     fallback: ContentfulStatusCode = INTERNAL_SERVER_ERROR,
 ): ContentfulStatusCode {
-    const value = (err as any).status ?? (err as any).cause
+    const value = (err as any)?.status ?? (err as any)?.cause
 
     if (value === undefined || value === null || Number.isNaN(value)) {
         return fallback
